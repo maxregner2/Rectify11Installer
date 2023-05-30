@@ -1,4 +1,4 @@
-﻿using Rectify11Installer.Core;
+using Rectify11Installer.Core;
 using System;
 using System.Runtime.InteropServices;
 
@@ -49,11 +49,11 @@ namespace Rectify11Installer.Win32
 		};
 		#endregion
 		#region Public Methods
-		public static void RefreshTitleBarColor(IntPtr hWnd)
+		public static void RefreshTitleBarColor(IntPtr handle)
 		{
 			if (Environment.OSVersion.Version.Build < 18362)
 			{
-				SetProp(hWnd, "UseImmersiveDarkModeColors", new IntPtr(Theme.IsUsingDarkMode ? 1 : 0));
+				SetProp(handle, "UseImmersiveDarkModeColors", new IntPtr(Theme.IsUsingDarkMode ? 1 : 0));
 			}
 			else
 			{
@@ -66,10 +66,10 @@ namespace Rectify11Installer.Win32
 					pvData = ptr,
 					cbData = size
 				};
-				SetWindowCompositionAttribute(hWnd, ref data);
+				SetWindowCompositionAttribute(handle, ref data);
 			}
 		}
-		public static void UpdateFrame(FrmWizard frm, bool yes)
+		public static void UpdateFrame(FrmWizard form, bool yes)
 		{
 			var extend = Theme.IsUsingDarkMode;
 
@@ -79,30 +79,30 @@ namespace Rectify11Installer.Win32
 				var tabbedvalue = 0x04;
 				if (extend)
 				{
-					DwmSetWindowAttribute(frm.Handle, DWMATTRIB.DWMWA_SYSTEMBACKDROP_TYPE, ref micaValue, Marshal.SizeOf(typeof(int)));
+					DwmSetWindowAttribute(form.Handle, DWMATTRIB.DWMWA_SYSTEMBACKDROP_TYPE, ref micaValue, Marshal.SizeOf(typeof(int)));
 				}
 				else
 				{
-					DwmSetWindowAttribute(frm.Handle, DWMATTRIB.DWMWA_SYSTEMBACKDROP_TYPE, ref tabbedvalue, Marshal.SizeOf(typeof(int)));
+					DwmSetWindowAttribute(form.Handle, DWMATTRIB.DWMWA_SYSTEMBACKDROP_TYPE, ref tabbedvalue, Marshal.SizeOf(typeof(int)));
 				}
 			}
 
 			else
 			{
 				var trueValue = 0x01;
-				DwmSetWindowAttribute(frm.Handle, DWMATTRIB.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
+				DwmSetWindowAttribute(form.Handle, DWMATTRIB.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
 			}
 			var DarkMode = Theme.IsUsingDarkMode;
 			var m = new NativeMethods.MARGINS();
 
 			if (DarkMode)
 			{
-				m.cyTopHeight = frm.Height;
+				m.cyTopHeight = form.Height;
 			}
 			else
 			{
-				m.cyTopHeight = frm.tableLayoutPanel1.Height + 1;
-				m.cyBottomHeight = frm.tableLayoutPanel2.Height + 5;
+				m.cyTopHeight = form.tableLayoutPanel1.Height + 1;
+				m.cyBottomHeight = form.tableLayoutPanel2.Height + 5;
 			}
 			if (yes)
 			{
@@ -111,7 +111,7 @@ namespace Rectify11Installer.Win32
 					 && Environment.OSVersion.Version.Build == 22000)
 					|| Environment.OSVersion.Version.Build is > 22000 or < 21996)
 				{
-					NativeMethods.DwmExtendFrameIntoClientArea(frm.Handle, ref m);
+					NativeMethods.DwmExtendFrameIntoClientArea(form.Handle, ref m);
 				}
 			}
 			else
@@ -128,7 +128,7 @@ namespace Rectify11Installer.Win32
 					 && Environment.OSVersion.Version.Build == 22000)
 					|| Environment.OSVersion.Version.Build is > 22000 or < 21996)
 				{
-					NativeMethods.DwmExtendFrameIntoClientArea(frm.Handle, ref mar);
+					NativeMethods.DwmExtendFrameIntoClientArea(form.Handle, ref mar);
 				}
 			}
 		}
